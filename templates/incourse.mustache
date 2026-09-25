@@ -1,0 +1,232 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_prime/incourse
+
+    prime Incourse (inside course) layout template.
+
+    This layout is used when viewing a course or activity page. It renders
+    the header, the course index drawer, the blocks drawer, the main content
+    region and the footer.
+
+    Context variables required for this template:
+    * sitename - The name of the site.
+    * output - The core renderer for the page.
+    * bodyattributes - Attributes for the body tag as a string of HTML attributes.
+    * sidepreblocks - HTML for the side-pre blocks.
+    * sidepostblocks - HTML for the side-post blocks.
+    * hasblocks - True if there are blocks on this page.
+    * courseindex - HTML for the course index.
+    * courseindexopen - True if the course index drawer should be open on page load.
+    * blockdraweropen - True if the blocks drawer should be open on page load.
+    * forceblockdraweropen - True to force the blocks drawer to stay open.
+    * regionmainsettingsmenu - HTML for the region main settings menu.
+    * hasregionmainsettingsmenu - True if there is a region main settings menu.
+    * secondarymoremenu - HTML for the secondary navigation menu.
+    * headercontent - True if the page has an activity header.
+    * overflow - True if the activity has an overflow menu (url select).
+    * addblockbutton - HTML for the "Add block" button.
+
+    Example context (json):
+    {
+        "sitename": "Moodle",
+        "output": {
+            "doctype": "<!DOCTYPE html>",
+            "page_title": "Test page",
+            "favicon": "favicon.ico",
+            "main_content": "<h1>Headings make html validators happier</h1>",
+            "full_header": "",
+            "standard_top_of_body_html": "",
+            "standard_after_main_region_html": "",
+            "course_content_header": "",
+            "course_content_footer": "",
+            "activity_navigation": ""
+        },
+        "bodyattributes": "",
+        "sidepreblocks": "<h2>Blocks html goes here</h2>",
+        "sidepostblocks": "",
+        "hasblocks": true,
+        "courseindex": "",
+        "courseindexopen": false,
+        "blockdraweropen": true,
+        "forceblockdraweropen": false,
+        "regionmainsettingsmenu": "",
+        "hasregionmainsettingsmenu": false,
+        "secondarymoremenu": false,
+        "headercontent": false,
+        "overflow": false,
+        "addblockbutton": ""
+    }
+}}
+{{> theme_boost/head }}
+
+
+<body {{{ bodyattributes }}}>
+    {{> core/local/toast/wrapper}}
+    <div id="page-wrapper" class="d-print-block">
+        {{{ output.standard_top_of_body_html }}}
+        {{> theme_prime/header }}
+        {{#courseindex}}
+            {{< theme_boost/drawer }}
+                {{$id}}theme_boost-drawers-courseindex{{/id}}
+                {{$drawerheadercontent}}
+                    {{> theme_boost/courseindexdrawercontrols}}
+                {{/drawerheadercontent}}
+                {{$drawerclasses}}drawer drawer-left {{#courseindexopen}}show{{/courseindexopen}}{{/drawerclasses}}
+                {{$drawercontent}}
+                    {{{courseindex}}}
+                {{/drawercontent}}
+                {{$drawerpreferencename}}drawer-open-index{{/drawerpreferencename}}
+                {{$drawerstate}}show-drawer-left{{/drawerstate}}
+                {{$tooltipplacement}}right{{/tooltipplacement}}
+                {{$closebuttontext}}{{#str}}closecourseindex, core{{/str}}{{/closebuttontext}}
+            {{/ theme_boost/drawer}}
+        {{/courseindex}}
+        {{#hasblocks}}
+            {{< theme_boost/drawer }}
+                {{$id}}theme_boost-drawers-blocks{{/id}}
+                {{$drawerclasses}}drawer drawer-right{{#blockdraweropen}} show{{/blockdraweropen}}{{/drawerclasses}}
+                {{$drawercontent}}
+                    <section class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
+                        {{{ addblockbutton }}}
+                        {{{ sidepreblocks }}}
+                    </section>
+                {{/drawercontent}}
+                {{$drawerpreferencename}}drawer-open-block{{/drawerpreferencename}}
+                {{$forceopen}}{{#forceblockdraweropen}}1{{/forceblockdraweropen}}{{/forceopen}}
+                {{$drawerstate}}show-drawer-right{{/drawerstate}}
+                {{$tooltipplacement}}left{{/tooltipplacement}}
+                {{$drawercloseonresize}}1{{/drawercloseonresize}}
+                {{$closebuttontext}}{{#str}}closeblockdrawer, core{{/str}}{{/closebuttontext}}
+            {{/ theme_boost/drawer}}
+        {{/hasblocks}}
+        <div id="page" data-region="mainpage" data-usertour="scroller" class="drawers {{#courseindexopen}}show-drawer-left{{/courseindexopen}} {{#blockdraweropen}}show-drawer-right{{/blockdraweropen}} drag-container">
+            <div id="topofscroll" class="main-inner">
+                <div class="drawer-toggles d-flex">
+                    {{#courseindex}}
+                        <div class="drawer-toggler drawer-left-toggle open-nav d-print-none">
+                            <button
+                                class="btn icon-no-margin"
+                                data-toggler="drawers"
+                                data-action="toggle"
+                                data-target="theme_boost-drawers-courseindex"
+                                data-toggle="tooltip"
+                                data-placement="right"
+                                title="{{#str}}opendrawerindex, core{{/str}}"
+                            >
+                                <span class="sr-only">{{#str}}opendrawerindex, core{{/str}}</span>
+                                {{#pix}} t/index_drawer, moodle {{/pix}}
+                            </button>
+                        </div>
+                    {{/courseindex}}
+                    {{#hasblocks}}
+                        <div class="drawer-toggler drawer-right-toggle ml-auto d-print-none">
+                            <button
+                                class="btn icon-no-margin"
+                                data-toggler="drawers"
+                                data-action="toggle"
+                                data-target="theme_boost-drawers-blocks"
+                                data-toggle="tooltip"
+                                data-placement="right"
+                                title="{{#str}}opendrawerblocks, core{{/str}}"
+                            >
+                                <span class="sr-only">{{#str}}opendrawerblocks, core{{/str}}</span>
+                                <span class="dir-rtl-hide">{{#pix}}t/blocks_drawer, core{{/pix}}</span>
+                                <span class="dir-ltr-hide">{{#pix}}t/blocks_drawer_rtl, core{{/pix}}</span>
+                            </button>
+                        </div>
+                    {{/hasblocks}}
+                </div>
+                {{{ output.full_header }}}
+             
+                {{#secondarymoremenu}}
+                    <div class="secondary-navigation d-print-none flex-container" style="justify-content:center;">
+                        {{> core/moremenu}}
+                    </div>
+                {{/secondarymoremenu}}
+                
+
+                <div id="page-content" class="container pb-3 d-print-block">
+                    <div id="region-main-box">
+                        {{#hasregionmainsettingsmenu}}
+                        <div id="region-main-settings-menu" class="d-print-none">
+                            <div> {{{ regionmainsettingsmenu }}} </div>
+                        </div>
+                        {{/hasregionmainsettingsmenu}}
+                        <section id="region-main" aria-label="{{#str}}content{{/str}}">
+
+                            {{#hasregionmainsettingsmenu}}
+                                <div class="region_main_settings_menu_proxy"></div>
+                            {{/hasregionmainsettingsmenu}}
+                            {{{ output.course_content_header }}}
+                            {{#headercontent}}
+                                {{> core/activity_header }}
+                            {{/headercontent}}
+                            {{#overflow}}
+                                <div class="container-fluid tertiary-navigation">
+                                    <div class="navitem">
+                                        {{> core/url_select}}
+                                    </div>
+                                </div>
+                            {{/overflow}}
+                            {{{ sidepostblocks }}}
+                            {{{ output.main_content }}}
+                            {{{ output.activity_navigation }}}
+                            
+                            {{{ output.course_content_footer }}}
+
+                        </section>
+                    </div>
+                </div>
+            </div>
+            {{> theme_prime/footer }}
+        </div>
+        {{{ output.standard_after_main_region_html }}}
+    </div>
+
+
+
+{{#js}}
+require([], function() {
+
+    const header = document.querySelector('.header-main');
+    if (!header) return;
+
+    function forceRegularHeader() {
+        if (header.classList.contains('fixed-top')) {
+            header.classList.remove('fixed-top');
+        }
+        if (!header.classList.contains('regular-header')) {
+            header.classList.add('regular-header');
+        }
+    }
+
+    // Ejecuta al cargar
+    forceRegularHeader();
+
+    // Ejecuta cuando el theme intente cambiarlo (scroll, resize, etc.)
+    window.addEventListener('scroll', forceRegularHeader);
+    window.addEventListener('resize', forceRegularHeader);
+
+});
+{{/js}}
+
+
+</body>
+</html>
+
+

@@ -1,0 +1,264 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_prime/mycourses_slider
+
+    prime My courses slider block template.
+
+    Renders a responsive carousel of promotional course cards. Each slide
+    shows a background image, a caption and, on hover, a description with
+    an optional call-to-action button. Navigation arrows and autoplay are
+    handled by an inline JavaScript module.
+
+    Context variables required for this template:
+    * status - Flag wrapping the whole block; renders only when set.
+    * slidebgcolor - Background color for the slider section.
+    * isblockempty - Flag; shows an empty-block warning message when set.
+    * sliderblockstatus - Flag; renders the slider only when enabled.
+    * slidetitle - Title text of the slider (HTML allowed).
+    * slidedescription - Description text of the slider (HTML allowed).
+    * slides - Array of slide items.
+      * slidestatus - Flag indicating the slide should render.
+      * slideimg - URL of the slide background image.
+      * caption - Caption text of the slide (HTML allowed).
+      * desc - Description text of the slide (HTML allowed).
+      * btntxt - Text for the slide call-to-action button.
+      * btnlink - URL the slide call-to-action button links to.
+      * btntarget - Target attribute for the button link (e.g. "_self", "_blank").
+
+    Example context (json):
+    {
+        "status": true,
+        "slidebgcolor": "#f5f5f5",
+        "isblockempty": false,
+        "sliderblockstatus": true,
+        "slidetitle": "Featured courses",
+        "slidedescription": "<p>Explore our most popular courses.</p>",
+        "slides": [
+            {
+                "slidestatus": true,
+                "slideimg": "/theme/prime/pix/slide1.jpg",
+                "caption": "Introduction to Physics",
+                "desc": "<p>Learn the fundamentals of physics.</p>",
+                "btntxt": "View course",
+                "btnlink": "/course/view.php?id=2",
+                "btntarget": "_self"
+            },
+            {
+                "slidestatus": true,
+                "slideimg": "/theme/prime/pix/slide2.jpg",
+                "caption": "Algebra basics",
+                "desc": "<p>Master the basics of algebra.</p>",
+                "btntxt": "View course",
+                "btnlink": "/course/view.php?id=3",
+                "btntarget": "_self"
+            }
+        ]
+    }
+}}
+
+{{#status}}
+
+<style>
+
+.my-sliders-slider{
+    background-color:{{slidebgcolor}};
+}
+
+</style>
+
+{{#isblockempty}}
+<div class="custom-alert-block alert alert-warning">
+    {{#str}}blockemptymessage, theme_prime{{/str}}
+</div>
+{{/isblockempty}}
+
+{{#sliderblockstatus}}
+
+<div class="my-sliders-slider" id="my-courses">
+
+    <div class="container flex-container pt20 text-center">
+
+        <div class="container">
+            <h2 class="titulo1 wow  animate__fadeInDown">
+                {{{slidetitle}}}
+            </h2>
+        </div>
+
+        <div class="container titulo3"> 
+            {{#slidedescription}}
+                {{{slidedescription}}}
+            {{/slidedescription}}
+        </div>
+
+    </div>
+
+    <div class="container js-mycourses-slick wow  animate__fadeInUp">
+
+        <button class="mycourses-prev">
+            <i class="fa fa-angle-left"></i>
+        </button>
+
+        <div class="mycourses-track">
+
+            {{#slides}}
+            {{#slidestatus}}
+            {{#slideimg}}
+
+            <div class="slider-item">
+
+                <div class="course-card"
+                     style="background-image:url({{{slideimg}}});">
+
+                    <div class="filtro"></div>
+
+                    <div class="course-info">
+
+                        {{#caption}}
+                        <h5>
+                            {{{caption}}}
+                        </h5>
+                        {{/caption}}
+
+                        {{#desc}}
+                        <div class="content">
+
+                            <small>
+                                {{{desc}}}
+                            </small>
+
+                            {{#btntxt}}
+                            <div class="course-info-note">
+
+                                <a href="{{{btnlink}}}"
+                                   target="{{btntarget}}"
+                                   class="btn btn-primary">
+
+                                    {{btntxt}}
+
+                                </a>
+
+                            </div>
+                            {{/btntxt}}
+
+                        </div>
+                        {{/desc}}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {{/slideimg}}
+            {{/slidestatus}}
+            {{/slides}}
+
+        </div>
+
+        <button class="mycourses-next">
+            <i class="fa fa-angle-right"></i>
+        </button>
+
+    </div>
+
+</div>
+
+{{/sliderblockstatus}}
+
+{{/status}}
+
+{{#js}}
+(function(){
+
+document.querySelectorAll(".js-mycourses-slick").forEach(function(carousel){
+
+    const track = carousel.querySelector(".mycourses-track");
+    const slides = carousel.querySelectorAll(".slider-item");
+    const next = carousel.querySelector(".mycourses-next");
+    const prev = carousel.querySelector(".mycourses-prev");
+
+    let index = 0;
+
+    function visible(){
+        if(window.innerWidth < 768) return 1;
+        if(window.innerWidth < 1200) return 2;
+        return 3;
+    }
+
+    function update(){
+
+        const v = visible();
+        const width = carousel.offsetWidth / v;
+
+        slides.forEach(function(slide){
+            slide.style.minWidth = width + "px";
+            slide.style.maxWidth = width + "px";
+        });
+
+        if(index > slides.length - v){
+            index = 0;
+        }
+
+        track.style.transform =
+            "translateX(-" + (index * width) + "px)";
+    }
+
+    next.addEventListener("click", function(){
+
+        index++;
+
+        if(index > slides.length - visible()){
+            index = 0;
+        }
+
+        update();
+
+    });
+
+    prev.addEventListener("click", function(){
+
+        index--;
+
+        if(index < 0){
+            index = slides.length - visible();
+        }
+
+        update();
+
+    });
+
+    window.addEventListener("resize", update);
+
+    setInterval(function(){
+
+        index++;
+
+        if(index > slides.length - visible()){
+            index = 0;
+        }
+
+        update();
+
+    }, 4000);
+
+    update();
+
+});
+
+})();
+{{/js}}

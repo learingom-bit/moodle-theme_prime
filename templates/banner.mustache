@@ -1,0 +1,119 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_prime/banner
+
+    prime Banner layout template.
+
+    Context variables required for this template:
+    * title - The banner title text.
+    * subtitle - The banner subtitle text.
+    * imageurl - URL of the banner background image.
+    * buttontext - Text to display on the call-to-action button.
+    * buttonurl - URL the call-to-action button links to.
+
+    Example context (json):
+    {
+        "title": "Welcome to Prime",
+        "subtitle": "Your learning journey starts here",
+        "imageurl": "/theme/prime/pix/home/lgbannermedia.png",
+        "buttontext": "Get started",
+        "buttonurl": "/course/index.php"
+    }
+}}
+{{#lgbanner}}
+<style>
+
+.marketing-spots  h2{
+    color:{{lgbannercolortitle}}!important;
+}
+.marketing-spots .cinta{
+    padding-bottom:70px;
+}
+.marketing-spots  {
+    color:{{lgbannercolortext}};
+}
+
+
+</style>
+
+{{#blockisempty}}
+
+<div class="{{lgbannerstyle}} marketing-spots " style="gap:1rem;background-color:{{lgbannerbg}};">
+
+    <div class="container flex-container" style="padding-top:2rem;">
+        <div class="col-md-6 sector1 wow  animate__fadeInRight" {{#media}} style="background-image:url({{media}});background-size:cover; border-radius:30px 30px 0 0;overflow:hidden;min-height:400px;"  {{/media}}>
+            <div class="gradiente"></div>
+        </div>
+
+        <div class="col-md-6 p40 sector2 " style="padding-top:80px;padding-bottom:100px;">
+
+            {{#lgbannertitle}}
+            <h4 class="titulo1  wow  animate__fadeInDown">
+            <b> {{{lgbannertitle}}}  </b>
+            </h4>
+            {{/lgbannertitle}}
+
+            <div class="info-heads">
+                {{#lgbannercontent}}
+                <p class=" wow  animate__fadeInLeft">
+                    {{{lgbannercontent}}}
+                </p>
+                {{/lgbannercontent}}
+            </div>
+            {{#lgbannerbtnurl}}
+            <a href="{{lgbannerbtnurl}}"
+            target="_blank"
+            class="btn btn-circular btn-primary wow  animate__fadeInLeft">
+            {{#str}}readmore, theme_prime{{/str}}
+            </a>
+            {{/lgbannerbtnurl}}
+        </div>
+    </div>
+    <div class="cinta bg_maincolor">
+    <div class="container flex-container" style="padding:12px 80px;"> 
+        <div class="col-md-12 def-text text-center titulo2 marquee">
+            <div class="marquee-content">
+                <span>{{{lgbannerdesc}}}</span>
+                <span>{{{lgbannerdesc}}}</span>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div class="container p40 sector3 wow  animate__fadeInUp">
+        <div class="grilla-indicadores" style="position:relative;z-index:1;">
+            <div class="item sombra">
+                <span class="numero">{{resumen.noiniciado}}</span>
+                <span class="descrip">{{#str}}cursos-noiniciados, theme_prime{{/str}}</span>
+            </div>
+            <div class="item sombra">
+                <span class="numero">{{resumen.iniciado}}</span>
+                 <span class="descrip">{{#str}}cursos-iniciados, theme_prime{{/str}}</span>
+            </div>
+            <div class="item sombra">
+                <span class="numero">{{resumen.pendiente}}</span>
+                 <span class="descrip">{{#str}}cursos-pendientes, theme_prime{{/str}}</span>
+            </div>
+            <div class="item sombra">
+                <span class="numero">{{resumen.finalizado}}</span>
+                 <span class="descrip">{{#str}}cursos-finalizados, theme_prime{{/str}}</span>
+            </div>
+        </div>
+    </div>
+{{/blockisempty}}
+{{/lgbanner}}

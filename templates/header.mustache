@@ -1,0 +1,321 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_prime/header.
+
+    Page header template.
+
+    Example context (json):
+    {
+        "themestyleheader": 'true',
+        "output": {
+            "page_heading_menu": "<li>..</li>"
+        },
+        "sitename": "Moodle"
+    }
+}}
+
+{{> theme_prime/navbar }}
+<style>
+
+body{
+    color:{{bodytextcolor}}!important;
+}
+#page #page-header{
+    background-color:{{cabecerabg}};
+}
+#page #page-header .h2{
+    color:{{cabeceracolortitle}};
+}
+
+
+{{#cabeceramedia}}
+#page #page-header{
+    background-image:url({{cabeceramedia}});
+    background-size:cover;
+    background-position:center;
+}
+.filtro-header {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    background: #2b2b52;
+    background: linear-gradient(0deg,rgba(0,0,0, 1) 0%, rgba(0,0,0,.80) 53%, rgba(0,0,0,.40) 81%);
+    opacity: .5;
+}
+{{/cabeceramedia}}
+.show-drawer-left {
+        margin-left: 285px;
+        margin-right: 0;
+        padding-left: 1rem;
+    }
+
+.logo-white {
+  display: none;
+}
+
+.fixed-top .logo-color {
+    display: none;
+}
+
+.fixed-top .logo-white {
+    display: inline-block;
+}
+.regular-header .navbar-expand{
+    justify-content: space-between;
+}
+
+</style>
+
+
+    <div class="header-main {{#themestyleheader}} regular-header {{/themestyleheader}} {{^themestyleheader}} fixed-top {{/themestyleheader}}">
+        <div class="container-fluid ">
+            <nav class="navbar navbar-light bg-faded  navbar-expand">
+                <a href="{{{ config.wwwroot }}}/?redirect=0" class="navbar-brand {{# logourl }}has-logo{{/ logourl }}
+                                {{^ logourl }}
+                                    hidden-sm-down
+                                {{/ logourl }}">
+                    {{#showlogo}}
+                        {{# logourl }}
+                            <span class="logo logo-default">
+                                <img class="logo-color" src="{{logourl}}" alt="{{sitename}}">
+                                <img class="logo-white" src="{{logowhite}}" alt="{{sitename}}">
+                            </span>
+                            <span class="logo logo-compact">
+                                <img src="{{logocompact}}" alt="{{sitename}}">
+                            </span>
+                        {{/ logourl }}
+                        {{^ logourl }}
+                            <span class="site-name hidden-sm-down">{{{ sitename }}}</span>
+                        {{/ logourl }}
+                    {{/showlogo}}
+                    {{#showsitename}}
+                        <span class="nav-site-name">{{{sitename}}}</span>
+                    {{/showsitename}}
+                </a>
+                {{#menulink}}
+                    <div class="menu-container " id="menuContainer">
+        <ul class="menu navbar-blur" id="menues">
+                            {{{menulink}}}
+                        </ul>
+                    </div>
+                    {{/menulink}}
+                {{^ menulink}}
+                {{#primarymoremenu}}
+                    <div class="primary-navigation navbar-blur">
+                        
+                        {{> core/moremenu}}
+                    </div>
+                {{/primarymoremenu}}
+                {{/menulink}}
+                <ul class="navbar-nav d-none d-md-flex my-1 px-1">
+                    <!-- page_heading_menu -->
+                    {{{ output.page_heading_menu }}}
+                </ul>
+                <div id="usernavigation" class="navbar-nav ">
+                    {{#langmenu}}
+                        {{> theme_boost/language_menu }}
+                    {{/langmenu}}
+                    {{{ output.search_box }}}
+                    {{{ output.navbar_plugin_output }}}
+                    <div class="d-flex align-items-stretch usermenu-container" data-region="usermenu">
+                        {{#usermenu}}
+                            {{> core/user_menu }}
+                        {{/usermenu}}
+                    </div>
+                    
+                </div>
+
+            </nav>
+        </div>
+    </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const menues = document.getElementById('menues');
+    const menuContainer = document.getElementById('menuContainer');
+    
+    // Guardar los items originales del DOM
+    let originalItems = [];
+    
+    function guardarItemsOriginales() {
+        originalItems = [];
+        const items = menues.querySelectorAll('li');
+        items.forEach(li => {
+            const link = li.querySelector('a');
+            if (link) {
+                originalItems.push({
+                    text: link.textContent,
+                    href: link.href,
+                    class: li.className,
+                    linkClass: link.className,
+                    title: link.title || ''
+                });
+            }
+        });
+        //console.log('Items guardados:', originalItems.length);
+    }
+    
+    function ajustarMenu() {
+        // Guardar items originales si no los tenemos
+        if (originalItems.length === 0) {
+            guardarItemsOriginales();
+        }
+        
+        // Limpiar menú
+        menues.innerHTML = '';
+        
+        // Crear elementos temporales para medir
+        const tempContainer = document.createElement('div');
+        tempContainer.style.visibility = 'hidden';
+        tempContainer.style.position = 'absolute';
+        tempContainer.style.whiteSpace = 'nowrap';
+        tempContainer.style.display = 'flex';
+        document.body.appendChild(tempContainer);
+        
+        // Medir ancho de cada item
+        const itemsWidth = originalItems.map(item => {
+            const tempLink = document.createElement('a');
+            tempLink.style.padding = '15px 20px';
+            tempLink.style.display = 'inline-block';
+            tempLink.textContent = item.text;
+            tempContainer.appendChild(tempLink);
+            const width = tempLink.offsetWidth;
+            tempContainer.innerHTML = '';
+            return width;
+        });
+        
+        // Calcular espacio disponible (reservar 100px para dropdowns)
+        const menuWidth = menuContainer.offsetWidth - 100;
+        
+        //console.log('Ancho menú:', menuContainer.offsetWidth, 'Disponible:', menuWidth);
+        
+        let espacioUsado = 0;
+        let ultimoIndiceVisible = -1;
+        
+        // Determinar cuántos items caben
+        for (let i = 0; i < originalItems.length; i++) {
+            if (espacioUsado + itemsWidth[i] <= menuWidth) {
+                espacioUsado += itemsWidth[i];
+                ultimoIndiceVisible = i;
+                //console.log('Cabe item', i, 'ancho:', itemsWidth[i], 'espacio usado:', espacioUsado);
+            } else {
+                //console.log('No cabe item', i, 'ancho:', itemsWidth[i]);
+                break;
+            }
+        }
+        
+        //console.log('Items visibles:', ultimoIndiceVisible + 1, 'de', originalItems.length);
+        
+        // Mostrar items que caben (SOLO si hay espacio para al menos 1)
+        for (let i = 0; i <= ultimoIndiceVisible; i++) {
+            const item = originalItems[i];
+            const li = document.createElement('li');
+            li.className = item.class;
+            
+            const a = document.createElement('a');
+            a.className = item.linkClass;
+            a.href = item.href;
+            a.textContent = item.text;
+            if (item.title) a.title = item.title;
+            
+            li.appendChild(a);
+            menues.appendChild(li);
+        }
+        
+        // SIEMPRE crear dropdowns si hay items ocultos
+        // Si NO cabe NINGÚN item (ultimoIndiceVisible = -1), el dropdowns contendrá TODOS los items
+        if (ultimoIndiceVisible < originalItems.length - 1) {
+            const dropdownsLi = document.createElement('li');
+            dropdownsLi.className = 'dropdowns';
+            
+            const dropdownsBtn = document.createElement('span');
+            dropdownsBtn.className = 'dropdowns-toggle';
+            dropdownsBtn.textContent = 'Más...';
+            
+            const dropdownsMenu = document.createElement('div');
+            dropdownsMenu.className = 'dropdowns-menu';
+            dropdownsMenu.style.display = 'none'; // Inicialmente oculto
+            
+            // Determinar qué items van al dropdowns
+            let startIndex = Math.max(0, ultimoIndiceVisible + 1);
+            
+            for (let i = startIndex; i < originalItems.length; i++) {
+                const item = originalItems[i];
+                const a = document.createElement('a');
+                a.className = item.linkClass;
+                a.href = item.href;
+                a.textContent = item.text;
+                if (item.title) a.title = item.title;
+                dropdownsMenu.appendChild(a);
+            }
+            
+            dropdownsLi.appendChild(dropdownsBtn);
+            dropdownsLi.appendChild(dropdownsMenu);
+            menues.appendChild(dropdownsLi);
+        }
+        
+        // Limpiar elementos temporales
+        document.body.removeChild(tempContainer);
+    }
+    
+    // Guardar items al cargar
+    guardarItemsOriginales();
+    
+    // Ejecutar al cargar y al redimensionar
+    ajustarMenu();
+    window.addEventListener('resize', ajustarMenu);
+    
+    // MANEJADOR DE CLIC PARA EL BOTÓN MÁS...
+    document.addEventListener('click', function(e) {
+        // Verificar si el clic fue en el botón dropdowns-toggle
+        if (e.target.classList.contains('dropdowns-toggle') || 
+            (e.target.parentElement && e.target.parentElement.classList.contains('dropdowns-toggle'))) {
+            
+            const dropdownsLi = e.target.closest('.dropdowns');
+            if (dropdownsLi) {
+                const dropdownsMenu = dropdownsLi.querySelector('.dropdowns-menu');
+                const menu = document.getElementById('menues');
+                
+                // Alternar las clases
+                if (dropdownsMenu) {
+                    if (dropdownsMenu.style.display === 'block') {
+                        dropdownsMenu.style.display = 'none';
+                        menues.style.overflow = 'hidden';
+                    } else {
+                        dropdownsMenu.style.display = 'block';
+                        menues.style.overflow = 'visible';
+                    }
+                }
+            }
+        }
+    });
+    
+    // Cerrar menú si se hace clic fuera
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdowns')) {
+            const dropdownsMenu = document.querySelector('.dropdowns-menu');
+            const menues = document.getElementById('menues');
+            if (dropdownsMenu && dropdownsMenu.style.display === 'block') {
+                dropdownsMenu.style.display = 'none';
+                menues.style.overflow = 'hidden';
+            }
+        }
+    });
+});
+</script>

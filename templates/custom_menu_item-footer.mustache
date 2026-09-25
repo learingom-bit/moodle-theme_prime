@@ -1,0 +1,76 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_prime/footer_item
+
+    prime Footer item template.
+
+    Renders a single footer navigation item. If the item has children,
+    it is displayed as a dropdown; otherwise it renders as a simple link.
+
+    Context variables required for this template:
+    * id - Unique identifier for the item (used for dropdown aria/id attributes).
+    * text - Display text of the footer link.
+    * url - Destination URL of the footer link.
+    * haschildren - Boolean flag indicating whether the item has sub-items.
+    * children - Array of child items (each with "text" and "url").
+
+    Example context (json):
+    {
+        "id": "footer-item-1",
+        "text": "Resources",
+        "url": "#",
+        "haschildren": true,
+        "children": [
+            { "text": "Documentation", "url": "https://docs.moodle.org" },
+            { "text": "Support", "url": "https://moodle.org/support" }
+        ]
+    }
+}}
+
+{{#haschildren}}
+<li class="footer-dropdown">
+    <a class="footer-link dropdown-toggle"
+       href="#"
+       id="dropdown-{{id}}"
+       data-bs-toggle="dropdown"
+       aria-expanded="false">
+        {{text}}
+    </a>
+
+    <ul class="dropdown-menu"
+        aria-labelledby="dropdown-{{id}}">
+        {{#children}}
+            <li>
+                <a class="dropdown-item"
+                   href="{{url}}">
+                    {{text}}
+                </a>
+            </li>
+        {{/children}}
+    </ul>
+</li>
+{{/haschildren}}
+
+{{^haschildren}}
+<li>
+    <a class="footer-link"
+       href="{{url}}">
+        {{text}}
+    </a>
+</li>
+{{/haschildren}}

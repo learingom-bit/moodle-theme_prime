@@ -1,0 +1,203 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_prime/mycourses
+
+    prime My courses block template.
+
+    Displays the courses of the logged-in user in a responsive grid,
+    with filter buttons by course state (all, not started, in progress,
+    pending, completed) and a link to the "My courses" page. Each course
+    card shows an image, a progress bar, the category, the course name,
+    the estimated duration and the number of resources.
+
+    Context variables required for this template:
+    * usuarioidentificado - Flag; renders only when the user is logged in.
+    * mcoursestatus - Flag; renders only when the my-courses block is enabled.
+    * titlemycourses - Title text of the block (HTML allowed).
+    * mycoursescoursedesc - Description text of the block (HTML allowed).
+    * promotedmedia - URL of the background image for the slider.
+    * globalroot - Root URL of the Moodle site.
+    * mycursos - Array of course items.
+      * estado - Course state key ("notstarted", "inprogress", "pending", "completed").
+      * estadobtn - HTML for the state badge/label.
+      * image - URL of the course image.
+      * completion_percentage - Course completion percentage (0-100).
+      * category_name - Name of the course category.
+      * course_name - Name of the course.
+      * courseurl - URL of the course.
+      * coursead - Estimated duration text for the course.
+      * modulos - Number of resources in the course.
+
+    Example context (json):
+    {
+        "usuarioidentificado": true,
+        "mcoursestatus": true,
+        "titlemycourses": "My courses",
+        "mycoursescoursedesc": "<p>Continue your learning journey.</p>",
+        "promotedmedia": "/theme/prime/pix/courses-bg.jpg",
+        "globalroot": "https://moodle.example.com",
+        "mycursos": [
+            {
+                "estado": "inprogress",
+                "estadobtn": "<span class=\"estado2\">In progress</span>",
+                "image": "/pluginfile.php/123/course/image.jpg",
+                "completion_percentage": 45,
+                "category_name": "Science",
+                "course_name": "Introduction to Physics",
+                "courseurl": "/course/view.php?id=2",
+                "coursead": "10 hours",
+                "modulos": 12
+            },
+            {
+                "estado": "completed",
+                "estadobtn": "<span class=\"estado3\">Completed</span>",
+                "image": "/pluginfile.php/124/course/image.jpg",
+                "completion_percentage": 100,
+                "category_name": "Math",
+                "course_name": "Algebra basics",
+                "courseurl": "/course/view.php?id=3",
+                "coursead": "8 hours",
+                "modulos": 10
+            }
+        ]
+    }
+}}
+{{#usuarioidentificado}}
+{{#mcoursestatus}}
+
+<style>
+
+.my-courses-slider{
+    background-image:url({{{promotedmedia}}});
+}
+</style>
+
+
+<div class="my-courses-slider" id="my-courses">
+    <div class="container flex-container">
+        <div class="container" style="justify-content:center; text-align:center;">
+           {{#titlemycourses}}
+            <h2 class="titulo1  wow  animate__fadeInDown">
+                {{{titlemycourses}}}
+            </h2>
+            {{/titlemycourses}}
+            {{#mycoursescoursedesc}}
+           <p class="titulo3"> {{{mycoursescoursedesc}}}</p>
+           {{/mycoursescoursedesc}}
+        </div>
+
+        <!-- FILTROS -->
+        <div class="course-filters container" style="justify-content:center; text-align:center;margin-top:2rem;">
+            <button class="filter-btn active" data-state="all">{{#str}}mycourses-btn, theme_prime{{/str}}</button>
+            <button class="filter-btn" data-state="notstarted">
+                {{#str}}cursonoiniciado, theme_prime{{/str}}
+            </button>
+
+            <button class="filter-btn" data-state="inprogress">
+                {{#str}}cursoiniciado, theme_prime{{/str}}
+            </button>
+
+            <button class="filter-btn" data-state="pending">
+                {{#str}}cursopendiente, theme_prime{{/str}}
+            </button>
+
+            <button class="filter-btn" data-state="completed">
+                {{#str}}cursofinalizado, theme_prime{{/str}}
+            </button>
+        </div>
+        <div class="container wow  animate__fadeInUp">
+            <div class="grillacursos">
+                {{#mycursos}}
+                <div class="slider-item course-item" data-estado="{{estado}}">
+                    <div class="course-card">
+                        <img class="pictures" src="{{image}}">
+                        <div class="progress">
+                            <div class="progress-bar" style="width: {{completion_percentage}}%"> {{completion_percentage}}%</div>
+                        </div>
+                        <div class="course-info">
+                        <div class="flex-container botonera" >
+                             {{{estadobtn}}}
+                            <span class="labels " style="border:solid 1px #e2e6e7;">{{category_name}}</span>
+                        </div>
+                            <h5>
+                                <a href="{{courseurl}}">
+                                    {{#shortentext}}80, {{course_name}}{{/shortentext}}
+                                </a>
+                            </h5>
+                        </div>
+                        <div class="botonera">
+                           {{#coursead}} <span><i class="fa fa-clock-o glass"></i> {{coursead}}</span>{{/coursead}}
+                            <span><i class="fa fa-star glass"></i> {{modulos}} {{#str}}resources-data, theme_prime{{/str}}</span>
+                        </div>
+                    </div>
+                </div>
+                {{/mycursos}}
+            </div>
+        <div class="container pt40 flex-container" style="justify-content:center;">
+            <a class="btn btn-primary btn-circular" href="{{globalroot}}/my/">{{#str}}mycourses-btn, theme_prime{{/str}}</a></div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const buttons = document.querySelectorAll(".filter-btn");
+    const items = document.querySelectorAll(".course-item");
+
+    function applyFilter(state){
+
+        let count = 0;
+
+        items.forEach(item => {
+
+            const itemState = item.getAttribute("data-estado");
+
+            if(state === "all" || itemState === state){
+
+                if(count < 6){
+                    item.classList.remove("hidden");
+                    count++;
+                } else {
+                    item.classList.add("hidden");
+                }
+
+            } else {
+                item.classList.add("hidden");
+            }
+        });
+    }
+
+    buttons.forEach(btn => {
+        btn.addEventListener("click", function(){
+
+            buttons.forEach(b => b.classList.remove("active"));
+            this.classList.add("active");
+
+            applyFilter(this.getAttribute("data-state"));
+        });
+    });
+
+    applyFilter("all");
+
+});
+</script>
+
+{{/mcoursestatus}}
+{{/usuarioidentificado}}

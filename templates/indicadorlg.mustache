@@ -1,0 +1,157 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_prime/indicadorlg
+
+    prime Site features / indicator block template.
+
+    Renders a featured section with a media image, a title, a description
+    and a responsive grid of feature items, each with an optional icon,
+    a title and HTML content.
+
+    Context variables required for this template:
+    * indicadorlg - Flag wrapping the whole block; renders only when set.
+    * blockisempty - Flag indicating the block has content to render.
+    * class - Extra CSS classes for the block wrapper.
+    * sitefeaturebgcolor - Background color for the site-features section.
+    * sitedmedia - URL of the main image displayed next to the content.
+    * blocktitle - Title text of the block (HTML allowed).
+    * blockstatus - Flag indicating whether the description block should render.
+    * blockdesc - Description text of the block (HTML allowed).
+    * feature - Array of feature items.
+      * status - Flag indicating the feature item should render.
+      * icon - Font Awesome icon name (e.g. "star", "book").
+      * sfbbody - Wrapper flag for the feature body.
+        * title - Title text of the feature item.
+        * content - HTML content of the feature item.
+
+    Example context (json):
+    {
+        "indicadorlg": true,
+        "blockisempty": true,
+        "class": "custom-class",
+        "sitefeaturebgcolor": "#f5f5f5",
+        "sitedmedia": "/theme/prime/pix/feature.jpg",
+        "blocktitle": "Our features",
+        "blockstatus": true,
+        "blockdesc": "<p>Discover what makes us different.</p>",
+        "feature": [
+            {
+                "status": true,
+                "icon": "star",
+                "sfbbody": {
+                    "title": "Quality",
+                    "content": "<p>High quality content.</p>"
+                }
+            },
+            {
+                "status": true,
+                "icon": "book",
+                "sfbbody": {
+                    "title": "Resources",
+                    "content": "<p>Plenty of learning resources.</p>"
+                }
+            }
+        ]
+    }
+}}
+<style>
+.site-features{
+    background-color: {{sitefeaturebgcolor}};
+}
+
+</style>
+{{#indicadorlg}}
+{{#blockisempty}}
+<div class="site-features {{class}} slick-features-wrapper" id="indicadorlg">
+
+    <div class="custom-site-expo flex-container align-items-center">
+
+        <!-- MEDIA -->
+        <div class="col-md-7" style="padding:0;">
+            {{#sitedmedia}}
+            <img src="{{sitedmedia}}" class="img-fluid img-rounded wow  animate__fadeInUp" alt="{{blocktitle}}">
+            {{/sitedmedia}}
+        </div>
+
+        <!-- CONTENT -->
+        <div class="col-md-4 p40">
+
+            {{#blocktitle}}
+            <h2 class="titulo2 wow  animate__fadeInDown">
+                {{{blocktitle}}}
+            </h2>
+            {{/blocktitle}}
+
+            {{#blockstatus}}
+            <div class="sitefeature-block-title">
+
+                {{#blockdesc}}
+                <div class="wow  animate__zoomIn titulo3">
+                    {{{blockdesc}}}
+                </div>
+                {{/blockdesc}}
+
+            </div>
+            {{/blockstatus}}
+
+        </div>
+
+        <div class="col-md-1"></div>
+
+    </div>
+</div>
+<div class="container p40 wow  animate__zoomIn">
+
+            <div class="grilla-blocks">
+
+                {{#feature}}
+                {{#status}}
+                <div class="item sombra text-center">
+                {{#icon}}
+                        <span class="icon">
+                           <i class="fa fa-{{{icon}}}"></i>
+                        </span>
+                        {{/icon}}
+                        
+                    <!-- HEADER -->
+                    <div class="accordion-header">
+                        {{#sfbbody}}
+                        {{#title}}
+                            <h2 class="maincolor titulo3"> <b>{{title}} </b></h2>
+                        {{/title}}
+                        {{/sfbbody}}
+
+                    </div>
+
+                    <!-- CONTENT -->
+                    {{#sfbbody}}
+                    {{#content}}
+                    <div class="accordion-content">
+                        {{{content}}}
+                    </div>
+                    {{/content}}
+                    {{/sfbbody}}
+
+                </div>
+                {{/status}}
+                {{/feature}}
+
+            </div>
+        </div>
+{{/blockisempty}}
+{{/indicadorlg}}
